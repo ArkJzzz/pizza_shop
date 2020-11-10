@@ -1,0 +1,7 @@
+*.log
+TODO.md
+.env
+images/
+__pycache__/
+.git/
+

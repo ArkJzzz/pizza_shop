@@ -104,6 +104,23 @@ def get_product(product_id):
     return response.json()
 
 
+def create_main_image_relationship(product_id, image_id):
+    url = f'{BASE_URL}/products/{product_id}/relationships/main-image'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+    }
+    payload = {
+        'data': { 
+            'type': 'main_image',
+            'id': image_id,
+        }
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+
+    return response.json()
+
+
 def create_file(file_path):
     url = f'{BASE_URL}/files'
     headers = {
@@ -121,21 +138,116 @@ def create_file(file_path):
     return response.json()
 
 
-def create_main_image_relationship(product_id, image_id):
-    url = f'{BASE_URL}/products/{product_id}/relationships/main-image'
+def get_all_files():
+    url = f'{BASE_URL}/files'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+        'Content-Type': 'application/json',
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    return response.json()
+
+
+def get_image_link(image_id):
+    url = f'{BASE_URL}/files/{image_id}'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+        'Content-Type': 'application/json',
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    file_data = response.json()
+
+    return file_data['data']['link']['href']
+
+
+def get_cart(cart_id):
+    url = f'{BASE_URL}/carts/{cart_id}'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+        'Content-Type': 'application/json',
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    return response.json()
+
+
+def delete_cart(cart_id):
+    url = f'{BASE_URL}/carts/{cart_id}'
     headers = {
         'Authorization': get_moltin_api_token(),
     }
+    response = requests.delete(url, headers=headers)
+    response.raise_for_status()
+
+    return response
+
+
+def add_product_to_cart(cart_id, product_id, quantity):
+    url = f'{BASE_URL}/carts/{cart_id}/items'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+        'Content-Type': 'application/json',
+    }
     payload = {
         'data': { 
-            'type': 'main_image',
-            'id': image_id,
+            'id': product_id,
+            'type': 'cart_item',
+            'quantity': int(quantity),
         }
     }
     response = requests.post(url, headers=headers, json=payload)
     response.raise_for_status()
 
     return response.json()
+
+
+def get_cart_items(cart_id):
+    url = f'{BASE_URL}/carts/{cart_id}/items'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+        'Content-Type': 'application/json',
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    return response.json()
+
+
+def remove_cart_item(cart_id, item_id):
+    url = f'{BASE_URL}/carts/{cart_id}/items/{item_id}'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+        'Content-Type': 'application/json',
+        }
+    response = requests.delete(url, headers=headers)
+    response.raise_for_status()
+
+    return response.json()
+
+
+def create_customer(customer_name, email):
+    url = f'{BASE_URL}/customers'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+        'Content-Type': 'application/json',
+    }
+    payload = {
+        'data': { 
+            'type': 'customer',
+            'name': customer_name,
+            'email': email,
+        }
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+
+    return response.json()
+
 
 def create_flow(name, description):
     url = f'{BASE_URL}/flows'
@@ -188,6 +300,7 @@ def create_field(name, description, flow_id):
 
     return response.json()
 
+
 def create_entry(flow_name, entry_data):
     slug = flow_name.lower().replace(' ', '_')
     url = f'{BASE_URL}/flows/{slug}/entries'
@@ -196,120 +309,9 @@ def create_entry(flow_name, entry_data):
     }
     entry_data['type'] = 'entry'
     payload = {'data': entry_data}
-    
+
     response = requests.post(url, headers=headers, json=payload)
     logger.debug(response.text)
-    response.raise_for_status()
-
-    return response.json()
-
-
-def get_all_files():
-    url = f'{BASE_URL}/files'
-    headers = {
-        'Authorization': get_moltin_api_token(),
-        'Content-Type': 'application/json',
-    }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-
-    return response.json()
-
-
-def get_image_link(image_id):
-    url = f'{BASE_URL}/files/{image_id}'
-    headers = {
-        'Authorization': get_moltin_api_token(),
-        'Content-Type': 'application/json',
-    }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-
-    file_data = response.json()
-
-    return file_data['data']['link']['href']
-
-
-def add_product_to_cart(cart_id, product_id, quantity):
-    url = f'{BASE_URL}/carts/{cart_id}/items'
-    headers = {
-        'Authorization': get_moltin_api_token(),
-        'Content-Type': 'application/json',
-    }
-    payload = {
-        'data': { 
-            'id': product_id,
-            'type': 'cart_item',
-            'quantity': int(quantity),
-        }
-    }
-    response = requests.post(url, headers=headers, json=payload)
-    response.raise_for_status()
-
-    return response.json()
-
-
-def get_cart(cart_id):
-    url = f'{BASE_URL}/carts/{cart_id}'
-    headers = {
-        'Authorization': get_moltin_api_token(),
-        'Content-Type': 'application/json',
-    }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-
-    return response.json()
-
-
-def get_cart_items(cart_id):
-    url = f'{BASE_URL}/carts/{cart_id}/items'
-    headers = {
-        'Authorization': get_moltin_api_token(),
-        'Content-Type': 'application/json',
-    }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-
-    return response.json()
-
-
-def delete_cart(cart_id):
-    url = f'{BASE_URL}/carts/{cart_id}'
-    headers = {
-        'Authorization': get_moltin_api_token(),
-    }
-    response = requests.delete(url, headers=headers)
-    response.raise_for_status()
-
-    return response
-
-
-def remove_cart_item(cart_id, item_id):
-    url = f'{BASE_URL}/carts/{cart_id}/items/{item_id}'
-    headers = {
-        'Authorization': get_moltin_api_token(),
-        'Content-Type': 'application/json',
-        }
-    response = requests.delete(url, headers=headers)
-    response.raise_for_status()
-
-    return response.json()
-
-
-def create_customer(customer_name, email):
-    url = f'{BASE_URL}/customers'
-    headers = {
-        'Authorization': get_moltin_api_token(),
-        'Content-Type': 'application/json',
-    }
-    payload = {
-        'data': { 
-            'type': 'customer',
-            'name': customer_name,
-            'email': email,
-        }
-    }
-    response = requests.post(url, headers=headers, json=payload)
     response.raise_for_status()
 
     return response.json()

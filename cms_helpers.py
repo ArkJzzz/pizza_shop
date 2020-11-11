@@ -187,7 +187,7 @@ def delete_cart(cart_id):
     return response
 
 
-def add_product_to_cart(cart_id, product_id, quantity):
+def add_product_to_cart(cart_id, product_id, quantity=1):
     url = f'{BASE_URL}/carts/{cart_id}/items'
     headers = {
         'Authorization': get_moltin_api_token(),

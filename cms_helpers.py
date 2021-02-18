@@ -104,6 +104,18 @@ def get_product(product_id):
     return response.json()
 
 
+def delete_product(product_id):
+    url = f'{BASE_URL}/products/{product_id}'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+        'Content-Type': 'application/json',
+    }
+    response = requests.delete(url, headers=headers)
+    response.raise_for_status()
+
+    return response
+
+
 def create_main_image_relationship(product_id, image_id):
     url = f'{BASE_URL}/products/{product_id}/relationships/main-image'
     headers = {
@@ -121,13 +133,13 @@ def create_main_image_relationship(product_id, image_id):
     return response.json()
 
 
-def create_file(file_path):
+def create_file(file_path, file_name):
     url = f'{BASE_URL}/files'
     headers = {
         'Authorization': get_moltin_api_token(),
     }
     files = {
-        'file': (file_path, open(file_path, 'rb')),
+        'file': (file_name, open(file_path, 'rb')),
         'public': True,
     }
 
@@ -257,8 +269,8 @@ def create_flow(name, description):
     payload = {
         'data': {
             'type': 'flow',
-            'name': name,
-            'slug': name.lower(),
+            'name': name.replace(' ', '_'),
+            'slug': name.lower().replace(' ', '_'),
             'description': description,
             'enabled': True,
         }
@@ -278,7 +290,7 @@ def create_field(name, description, flow_id):
     payload = {
         'data': {
             'type': 'field',
-            'name': name,
+            'name': name.replace(' ', '_'),
             'slug': name.lower().replace(' ', '_'),
             'field_type': 'string',
             'description': description,
@@ -312,6 +324,29 @@ def create_entry(flow_name, entry_data):
 
     response = requests.post(url, headers=headers, json=payload)
     logger.debug(response.text)
+    response.raise_for_status()
+
+    return response.json()
+
+
+def get_all_entries(slug):
+    url = f'{BASE_URL}/flows/{slug}/entries'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    return response.json()
+
+
+def get_an_entry(slug, entry_id):
+    url = f'{BASE_URL}/flows/{slug}/entries/{entry_id}'
+    headers = {
+        'Authorization': get_moltin_api_token(),
+    }
+
+    response = requests.get(url, headers=headers)
     response.raise_for_status()
 
     return response.json()

@@ -519,7 +519,7 @@ def main():
 
     load_dotenv()
     updater = Updater(
-            token=os.getenv('DEV_TELEGRAM_TOKEN'),
+            token=os.getenv('TELEGRAM_TOKEN'),
             use_context=True,
         )
     job_queue = updater.job_queue

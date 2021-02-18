@@ -1,6 +1,6 @@
 # pizza_shop
 
-Чат-бот-магазин для Telegram.
+Бот-пиццерия для Telegram.
 
 ![](static/pizzeria_bot_in_progress.gif)
 

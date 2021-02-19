@@ -103,17 +103,24 @@ def handle_users_reply(update, context):
     }
 
     state_handler = states_functions[user_state]
-
-    try:
-        next_state = state_handler(update, context)
-        logger.debug('next_state: {}'.format(next_state))
-        db.hset(name='pizzeria_users_states', key=chat_id, value=next_state)
-    except Exception as err:
-        logger.error('Error: {}'.format(err), exc_info=True)
+    next_state = state_handler(update, context)
+    logger.debug('next_state: {}'.format(next_state))
+    db.hset(name='pizzeria_users_states', key=chat_id, value=next_state)
 
 
-def error(update, error):
-    logger.warning('Update "%s" caused error "%s"', update, error)
+def error_handler(update, context):
+    message = f'''\
+            Exception while handling an update:
+            {context.error}
+        '''
+    logger.error(message)
+
+    context.bot.send_message(
+        chat_id=os.getenv('TELEGRAM_ADMIN_CHAT_ID'), 
+        text=message,
+    )
+
+    
 
 
 def start(update, context):
@@ -546,6 +553,8 @@ def main():
     dispatcher.add_handler(users_location_handler)
     dispatcher.add_handler(precheckout_handler)
     dispatcher.add_handler(successful_payment_handler)
+
+    dispatcher.add_error_handler(error_handler)
 
     updater.start_polling()
     updater.idle()

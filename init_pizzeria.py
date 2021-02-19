@@ -35,7 +35,8 @@ def send_product_to_store(item):
         directory=os.path.join(BASE_DIR, 'images'), 
         filename='product_img',
     )
-    product_image = cms_helpers.create_file(item_image_file, 'product_img.jpeg')
+    product_image = cms_helpers.create_file(item_image_file, 
+                                                        'product_img.jpeg')
     os.remove(item_image_file)
     
     product_id = product['data']['id']
@@ -83,23 +84,23 @@ def main():
             send_product_to_the_store(item)
 
         pizzeria_flow = cms_helpers.create_flow(
-                    name='Pizzeria', 
+                    name='Pizzeria',
                     description='Pizzeria'
                 )
         pizzeria_flow_id = pizzeria_flow['data']['id']
         logger.debug(pizzeria_flow_id)
 
         pizzeria_flow_fields = (
-                'Address', 
-                'Alias', 
-                'Longitude', 
-                'Latitude', 
-                'Delivery_man'
+                'Address',
+                'Alias',
+                'Longitude',
+                'Latitude',
+                'Delivery_man',
             )
         for field in pizzeria_flow_fields:
             cms_helpers.create_field(
                 name=field, 
-                description=f'Pizzeria {field}', 
+                description=f'Pizzeria {field}',
                 flow_id=pizzeria_flow_id,
             )
 
@@ -116,8 +117,8 @@ def main():
             cms_helpers.create_entry('Pizzeria', entry_data)
 
         customer_address_flow = cms_helpers.create_flow(
-                name='Customer Address', 
-                description='Customer Address'
+                name='Customer Address',
+                description='Customer Address',
             )
         customer_address_flow_id = customer_address_flow['data']['id']
         logger.debug(customer_address_flow_id)
@@ -125,18 +126,18 @@ def main():
         customer_address_flow_fields = (
                 'telegram_id',
                 'phone',
-                'latitude', 
+                'latitude',
                 'longitude',
             )
         for field in customer_address_flow_fields:
             cms_helpers.create_field(
-                name=field, 
-                description=f'Customer Address {field}', 
+                name=field,
+                description=f'Customer Address {field}',
                 flow_id=customer_address_flow_id,
             )
 
     except:
-        logging.exception('')
+        logger.exception('')
 
 
 if __name__ == '__main__':

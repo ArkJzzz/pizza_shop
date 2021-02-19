@@ -427,11 +427,14 @@ def successful_payment_callback(update, context):
     cart_items = cms_helpers.get_cart_items(chat_id)
     formated_cart_items = ext_helpers.format_cart(cart_items)
     
-    successful_payment_message = 'Спасибо что выбрали нас!\n'\
+    successful_payment_message = 'Спасибо что выбрали нас!'
 
     if context.user_data['delivery']:
-        successful_payment_message += ''\
-            'Курьер доставит ваш заказ в течение часа'
+        successful_payment_message += '''
+                Курьер доставит ваш заказ в течение часа
+            '''
+        successful_payment_message = textwrap.dedent(
+                                                successful_payment_message)
         
         context.bot.send_message(
             chat_id=delivery_man,
@@ -449,9 +452,12 @@ def successful_payment_callback(update, context):
         )
 
     elif not context.user_data['delivery']:
-        successful_payment_message += ''\
-            f'Вы можете забрать заказ из ближайшей пиццерии по адресу: '\
-            f'{pizzeria_address}.'
+        successful_payment_message += f'''
+                Вы можете забрать заказ из ближайшей пиццерии по адресу:
+                {pizzeria_address}.'
+            '''
+        successful_payment_message = textwrap.dedent(
+                                                successful_payment_message)
 
     update.message.reply_text(
         text=successful_payment_message,

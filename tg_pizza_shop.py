@@ -175,7 +175,7 @@ def show_description(update, context):
         image_id = (product_data['data']['relationships']
                                                 ['main_image']['data']['id'])
         image_link = cms_helpers.get_image_link(image_id)
-        message = keyboards.format_product_info(product_data)
+        message = ext_helpers.format_product_info(product_data)
         reply_keyboard = keyboards.get_product_details_keyboard(product_id)
         context.bot.send_photo(
             chat_id=chat_id,
@@ -220,7 +220,7 @@ def show_cart(update, context):
 
     cart_items = cms_helpers.get_cart_items(chat_id)
     logger.debug(f'Товары в корзине: {cart_items}')
-    formated_cart_items = keyboards.format_cart(cart_items)
+    formated_cart_items = ext_helpers.format_cart(cart_items)
     reply_keyboard = keyboards.get_cart_show_keyboard(cart_items)
 
     query.message.reply_text(
@@ -318,7 +318,7 @@ def choice_of_delivery(update, context):
             Она в {round(distance_to_pizzeria, 2)} км от Вас.
         '''
     pick_up_message = dedent.textwrap(pick_up_message)
-    delivery_message = keyboards.get_choice_of_delivery_message(
+    delivery_message = ext_helpers.get_choice_of_delivery_message(
                                             delivery_area, DELIVERY_PRICE)
     choice_of_delivery_message = f'''\
             {pick_up_message}
@@ -425,7 +425,7 @@ def successful_payment_callback(update, context):
     pizzeria_address = pizzeria['data']['address']
     delivery_man = pizzeria['data']['delivery_man']
     cart_items = cms_helpers.get_cart_items(chat_id)
-    formated_cart_items = keyboards.format_cart(cart_items)
+    formated_cart_items = ext_helpers.format_cart(cart_items)
     
     successful_payment_message = 'Спасибо что выбрали нас!\n'\
 
@@ -476,7 +476,7 @@ def remind_about_order(context):
         _(что делать, если пицца не пришла)_
     '''
     reminding_message = textwrap.dedent(reminding_message)
-    reminding_message = keyboards.formatting_for_markdown(reminding_message)
+    reminding_message = ext_helpers.formatting_for_markdown(reminding_message)
 
     context.bot.send_message(
         chat_id=context.job.context,

@@ -11,6 +11,8 @@ from telegram import KeyboardButton
 from telegram import ReplyKeyboardMarkup
 from telegram_bot_pagination import InlineKeyboardPaginator
 
+import ext_helpers
+
 logger = logging.getLogger('keyboards')
 
 
@@ -155,75 +157,6 @@ def get_choice_of_delivery_keyboard(delivery_area, delivery_price):
         choice_of_delivery_keyboard.append(delivery_button)
 
     return InlineKeyboardMarkup(choice_of_delivery_keyboard)
-
-
-def get_choice_of_delivery_message(delivery_area, delivery_price):
-    if delivery_area in delivery_price.keys():
-        delivery_message = f'''\
-            А можем и доставить за {delivery_price[delivery_area]} рублей 😊
-        '''
-        delivery_message = textwrap.dedent(delivery_message)
-        return delivery_message
-    else:
-        far_away_message = 'Простите, но Ваш адрес вне зоны доставки '\
-                            'и мы не сможем привезти заказ к Вам 😔'
-        return far_away_message
-
-
-def format_product_info(product_data):
-    product_data = product_data['data']
-    product_meta = product_data['meta']
-    display_price = product_meta['display_price']['with_tax']['formatted']
-
-    formated_info = f'''\
-            *{product_data['name']}*
-            {product_data['description']}
-
-            _Цена: {display_price}_
-        '''
-    formated_info = textwrap.dedent(formated_info)
-    formated_info = formatting_for_markdown(formated_info)
-
-    return formated_info
-
-
-def format_cart(cart_items):
-    cart_price = cart_items['meta']['display_price']['with_tax']['formatted']
-    cart_items_for_print = ''
-    
-    for item in cart_items['data']:
-        item_display_price = item['meta']['display_price']['with_tax']
-        cart_item_to_print =  f'''\
-                *{item['name']}*
-                {item['description']}
-                
-                _в заказе: {item['quantity']} шт._
-                _на сумму {item_display_price['value']['formatted']}_
-
-            '''
-        cart_item_to_print = textwrap.dedent(cart_item_to_print)
-        cart_items_for_print += cart_item_to_print
-
-    formated_cart = f'''\
-                {cart_items_for_print}              
-                *Сумма заказа: {cart_price}*
-            '''
-    formated_cart = textwrap.dedent(formated_cart)
-    formated_cart = formatting_for_markdown(formated_cart)
-
-    return formated_cart
-
-
-def formatting_for_markdown(text):
-    escaped_characters = [
-        '[', ']', '(', ')', '~', '`', '>', '#', 
-        '+', '-', '=', '|', '{', '}', '.', '!',
-    ]
-
-    for character in escaped_characters:
-        text = text.replace(character, '\\' + character)
-
-    return text
 
 
 if __name__ == '__main__':

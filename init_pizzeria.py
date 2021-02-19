@@ -135,8 +135,8 @@ def main():
                 flow_id=customer_address_flow_id,
             )
 
-    except Exception as err:
-        logger.error(f'Error: {err}', exc_info=True)
+    except:
+        logging.exception('')
 
 
 if __name__ == '__main__':

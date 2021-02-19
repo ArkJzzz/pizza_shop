@@ -27,7 +27,7 @@ def clear_catalogue():
         logger.debug(result)
 
 
-def send_product_to_the_store(item):
+def send_product_to_store(item):
     product = cms_helpers.create_product(item)
     
     item_image_file = download_picture(

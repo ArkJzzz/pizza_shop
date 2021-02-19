@@ -250,27 +250,20 @@ def confirm_phone(update, context):
     user_reply = update.message.text
     logger.debug(f'user_reply: {user_reply}')
 
-    try:
-        phone = phonenumbers.parse(user_reply, 'RU')
+    phone = phonenumbers.parse(user_reply, 'RU')
 
-        if phonenumbers.is_valid_number(phone):
-            logger.debug('phone valid')
-            phone = f'+{phone.country_code}{phone.national_number}'
-            context.user_data['phone'] = phone
+    if phonenumbers.is_valid_number(phone):
+        logger.debug('phone valid')
+        phone = f'+{phone.country_code}{phone.national_number}'
+        context.user_data['phone'] = phone
 
-            reply_keyboard = keyboards.get_confirm_phone_keyboard()
-            update.message.reply_text(
-                text=f'ваш номер телефона: {phone}',
-                reply_markup=reply_keyboard,
-            )
+        reply_keyboard = keyboards.get_confirm_phone_keyboard()
+        update.message.reply_text(
+            text=f'ваш номер телефона: {phone}',
+            reply_markup=reply_keyboard,
+        )
 
-        else:
-            raise NumberParseException(
-                    NumberParseException.NOT_A_NUMBER,
-                    'The string supplied did not seem to be a phone number',
-                )
-        
-    except NumberParseException as e:
+    else:
         invalid_phone_message = '''\
                 Кажется, номер неправильный.
                 Попробуйте снова.
@@ -279,7 +272,7 @@ def confirm_phone(update, context):
         update.message.reply_text(
             text=invalid_phone_message, 
         )
-
+        
     return 'HANDLE_CONFIRM_PHONE'
 
 
@@ -318,14 +311,20 @@ def choice_of_delivery(update, context):
     logger.debug(f'pizzeria_address: {pizzeria_address}')
     context.user_data['nearest_pizzeria_id'] = pizzeria_id
 
-    pick_up_message = ''\
-        f'Вы можете забрать заказ из ближайшей пиццерии по адресу: '\
-        f'{pizzeria_address}.\n'\
-        f'Она в {round(distance_to_pizzeria, 2)} км от Вас.'
+    pick_up_message = f'''\
+            Вы можете забрать заказ из ближайшей пиццерии по адресу:
+            {pizzeria_address}.
+
+            Она в {round(distance_to_pizzeria, 2)} км от Вас.
+        '''
+    pick_up_message = dedent.textwrap(pick_up_message)
     delivery_message = keyboards.get_choice_of_delivery_message(
                                             delivery_area, DELIVERY_PRICE)
-    choice_of_delivery_message = pick_up_message + '\n' + delivery_message
-
+    choice_of_delivery_message = f'''\
+            {pick_up_message}
+            {delivery_message}
+        '''
+    choice_of_delivery_message = dedent.textwrap(choice_of_delivery_message)
     reply_keyboard = keyboards.get_choice_of_delivery_keyboard(
                                             delivery_area, DELIVERY_PRICE)
     update.message.reply_text(

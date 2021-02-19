@@ -165,9 +165,8 @@ def get_choice_of_delivery_message(delivery_area, delivery_price):
         delivery_message = textwrap.dedent(delivery_message)
         return delivery_message
     else:
-        far_away_message = ''\
-            'Простите, но Ваш адрес вне зоны доставки '\
-            'и мы не сможем привезти заказ к Вам 😔'
+        far_away_message = 'Простите, но Ваш адрес вне зоны доставки '\
+                            'и мы не сможем привезти заказ к Вам 😔'
         return far_away_message
 
 
@@ -205,9 +204,11 @@ def format_cart(cart_items):
         cart_item_to_print = textwrap.dedent(cart_item_to_print)
         cart_items_for_print += cart_item_to_print
 
-    formated_cart = f'{cart_items_for_print}\n'\
-                    f'*Сумма заказа: {cart_price}*'
-
+    formated_cart = f'''\
+                {cart_items_for_print}              
+                *Сумма заказа: {cart_price}*
+            '''
+    formated_cart = textwrap.dedent(formated_cart)
     formated_cart = formatting_for_markdown(formated_cart)
 
     return formated_cart

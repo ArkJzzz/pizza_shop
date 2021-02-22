@@ -28,21 +28,22 @@ def clear_catalogue():
 
 
 def send_product_to_store(item):
-    product = cms_helpers.create_product(item)
-    
-    item_image_file = download_picture(
-        url=item['product_image']['url'], 
-        directory=os.path.join(BASE_DIR, 'images'), 
-        filename='product_img',
-    )
-    product_image = cms_helpers.create_file(item_image_file, 
-                                                        'product_img.jpeg')
-    os.remove(item_image_file)
-    
-    product_id = product['data']['id']
-    product_image_id = product_image['data']['id']
-    cms_helpers.create_main_image_relationship(product_id, product_image_id)
+    try:
+        product = cms_helpers.create_product(item)
+        item_image_file = download_picture(
+            url=item['product_image']['url'], 
+            directory=os.path.join(BASE_DIR, 'images'), 
+            filename='product_img',
+        )
+        product_image = cms_helpers.create_file(item_image_file, 
+                                                            'product_img.jpeg')
+        product_id = product['data']['id']
+        product_image_id = product_image['data']['id']
+        cms_helpers.create_main_image_relationship(product_id, 
+                                                            product_image_id)
 
+    finally:
+        os.remove(item_image_file)
 
 def main():
 
@@ -81,7 +82,7 @@ def main():
         with open(MENU_FILE, 'r') as menu_file:
             pizzeria_menu = json.load(menu_file)
         for item in pizzeria_menu:
-            send_product_to_the_store(item)
+            send_product_to_store(item)
 
         pizzeria_flow = cms_helpers.create_flow(
                     name='Pizzeria',

@@ -44,13 +44,13 @@ def get_menu_keyboard(products, current_page, items_per_page=7):
     paginator = InlineKeyboardPaginator(
         len(pages),
         current_page=current_page,
-        data_pattern='HANDLE_MENU|PAGE|{page}'
+        data_pattern='PAGE|{page}'
     )
 
     paginator.add_after(
         InlineKeyboardButton(
             text='🛒 корзина', 
-            callback_data='HANDLE_CART'
+            callback_data='SHOW_CART'
         )
     )
 
@@ -58,7 +58,7 @@ def get_menu_keyboard(products, current_page, items_per_page=7):
         paginator.add_before(
             InlineKeyboardButton(
                 text=product['name'], 
-                callback_data=f'HANDLE_DESCRIPTION|{product["id"]}',
+                callback_data=f'DESCRIPTION|{product["id"]}',
             )
         )
 
@@ -76,7 +76,7 @@ def get_product_details_keyboard(product_id):
         [
             InlineKeyboardButton(
                 text='В меню', 
-                callback_data='HANDLE_MENU',
+                callback_data='GO_MENU',
             )
         ]
     ]
@@ -90,14 +90,14 @@ def get_cart_show_keyboard(cart_items):
     footer_buttons = [
         InlineKeyboardButton(
                 text='Продолжить покупки', 
-                callback_data='HANDLE_MENU',
+                callback_data='GO_MENU',
             ),
     ]
     if cart_items['data']:
         footer_buttons.append(
             InlineKeyboardButton(
                 text='Оформить заказ', 
-                callback_data='HANDLE_WAITING_PHONE', 
+                callback_data='CHECKOUT', 
             ),
         )
     for item in cart_items['data']:
@@ -108,7 +108,7 @@ def get_cart_show_keyboard(cart_items):
             [
                 InlineKeyboardButton(
                     text=f'Удалить из корзины {item_name}',
-                    callback_data=f'HANDLE_REMOVE_ITEM|{item_id}',
+                    callback_data=f'REMOVE_ITEM|{item_id}',
                 )
             ],
         )
@@ -122,13 +122,13 @@ def get_confirm_phone_keyboard():
         [
             InlineKeyboardButton(
                 text='Да, звонить на этот номер', 
-                callback_data=f'HANDLE_WAITING_LOCATION',
+                callback_data=f'PHONE_CONFIRMED',
             )
         ],
         [
             InlineKeyboardButton(
                 text='Ввести заново', 
-                callback_data='HANDLE_WAITING_PHONE',
+                callback_data='CHECKOUT',
             ),
         ]
     ]
@@ -141,18 +141,16 @@ def get_choice_of_delivery_keyboard(delivery_area, delivery_price):
         [
             InlineKeyboardButton(
                 text='Самовывоз', 
-                callback_data=f'HANDLE_PICK_UP',
+                callback_data=f'PICK_UP',
             )
         ]
     ]
-
     delivery_button = [
         InlineKeyboardButton(
             text='Доставка', 
-            callback_data='HANDLE_DELIVERY',
+            callback_data='DELIVERY',
         )
     ]
-
     if delivery_area in delivery_price.keys():
         choice_of_delivery_keyboard.append(delivery_button)
 

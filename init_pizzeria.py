@@ -41,7 +41,6 @@ def send_product_to_store(item):
         product_image_id = product_image['data']['id']
         cms_helpers.create_main_image_relationship(product_id, 
                                                             product_image_id)
-
     finally:
         os.remove(item_image_file)
 
